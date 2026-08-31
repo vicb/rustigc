@@ -18,6 +18,8 @@
 //!   - FAI Triangle: ×1.4
 //!     - Closed circuit with 3 turnpoints
 //!     - Shortest side at least 28 % of total distance
+//!   - Quadrilatère: ×1.1
+//!     - Closed circuit with 4 turnpoints
 
 use super::{
     BalancedCircuit, ClosedCircuit, Closing, League, Limit, OpenPolyline,
@@ -35,7 +37,8 @@ impl Cfd {
 
 impl League for Cfd {
     const NAME: &'static str = "cfd";
-    const RULES: Ruleset = &[&Distance3Points, &TrianglePlat, &TriangleFai];
+    const RULES: Ruleset =
+        &[&Distance3Points, &TrianglePlat, &TriangleFai, &Quadrilatere];
 
     fn minimum() -> f64 {
         Self::MIN_POINTS
@@ -94,6 +97,25 @@ impl RuleDescription for TriangleFai {
         &[Variant {
             name: "triangle fai",
             multiplier: 1.4,
+            kind: VariantKind::Closing(Cfd::CLOSING),
+        }]
+    }
+}
+
+#[derive(Debug)]
+pub struct Quadrilatere;
+
+impl RuleGeometry for Quadrilatere {
+    type Shape = ClosedCircuit<4>;
+}
+
+impl RuleDescription for Quadrilatere {
+    type League = Cfd;
+
+    fn variants(&self) -> &'static [Variant] {
+        &[Variant {
+            name: "quadrilatère",
+            multiplier: 1.1,
             kind: VariantKind::Closing(Cfd::CLOSING),
         }]
     }
